@@ -1,0 +1,6 @@
+venv/
+.env
+.envrc
+src/csv_logs/.DS_Store
+*.pyc
+src/.DS_Store
