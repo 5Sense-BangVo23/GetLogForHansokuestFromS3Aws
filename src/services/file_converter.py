@@ -31,13 +31,17 @@ def convert_log_txt_to_csv(txt_path, output_dir="output"):
 
         with open(txt_path, "r", encoding="utf-8") as txt_file, open(csv_path, "w", newline="", encoding="utf-8") as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow(["timestamp", "ip", "user_agent", "path", "method"])  
+            writer.writerow(["timestamp", "ip", "user_agent", "path", "method", "input"])  
 
             for line in txt_file:
                 log_entry = parse_log_line(line.strip())
                 if log_entry:
-                    entry_tuple = (log_entry["timestamp"], log_entry["ip"], log_entry["user_agent"], log_entry["path"], log_entry["method"])
-                    
+                    entry_tuple = (
+                        log_entry["timestamp"], log_entry["ip"],
+                        log_entry["user_agent"], log_entry["path"],
+                        log_entry["method"], log_entry["input"]
+                    )
+
                     if entry_tuple not in seen_entries:  
                         writer.writerow(entry_tuple)
                         seen_entries.add(entry_tuple)
@@ -67,7 +71,8 @@ def parse_log_line(log_line):
             "ip": log_data.get("ip", ""),
             "user_agent": log_data.get("user_agent", ""),
             "path": log_data.get("path", ""),
-            "method": log_data.get("method", "")
+            "method": log_data.get("method", ""),
+            "input": json.dumps(log_data.get("input", "")) if isinstance(log_data.get("input"), dict) else log_data.get("input", "")
         }
 
     except (json.JSONDecodeError, IndexError) as e:
